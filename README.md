@@ -55,3 +55,86 @@ function getFunc(someArg1, someArg3) {
 
 ## 삼항연산자 다루기
 ![로컬 이미지](./images/1.png)
+
+
+## else if 피하기
+
+아래의 코드를 살펴보자
+```js
+const x = 1;
+if (x >= 0) {
+  console.log('x는 0보다 크거나 같다');
+} else if (x > 0) {
+  console.log('x는 0보다 크다');
+}
+```
+
+어떤 결과값이 나올까?? 첫번째 콘솔만 나올까? 아님 둘다 나올까?
+정답은 첫번째 콘솔만 나온다. 조금 헷갈릴 수도 있지만 위의 코드가 아래와 명백히 똑같다고 생각하면 헷갈리지 않을것이다.
+위의 코드는 컴퓨터상으로 아래와 같다
+
+```js
+const x = 1;
+if (x >= 0) {
+  console.log('x는 0보다 크거나 같다');
+} else {
+  if (x > 0) {
+    console.log('x는 0보다 크다');
+  }
+}
+```
+
+대처 방법
+1) if else if 문이 장황하게 늘어질것같으면 차라리 switch문을 써라
+2) if else if else if를 쓰는 대신 if 문을 여러개 작성해라
+3) 핵심은 return 문을 활용해서 사람이 읽기 편한 코드를 작성해야한다는 것이다.
+
+## Early Return
+```js
+function loginService(isLogin, user) {
+  if(!isLogin) {
+    if(checkToken()) {
+      if (!user.nickName) {
+        return registerUser(user);
+      } else {
+        refreshToken();
+
+        return '로그인 성공';
+      }
+    } else {
+      throw new Error('no token');
+    }
+  }
+}
+```
+위의 코드는 이렇게
+
+```js
+function loginService(isLogin, user) {
+  // Early Return 
+  /**
+   * 함수를 미리 종료
+   * 사람이 생각하기 편하다
+   */
+  if(isLogin) return;
+
+  if (!checkToken()) throw new Error('No Token');
+
+  if (!user.nickName) {
+    return registerUser(user);
+  } 
+
+  refreshToken();
+}
+```
+
+## 연산자 우선순위 명시적으로 표현하기
+```js
+if (isLogin && token || user) { ... } 
+```
+위와같은 코드는
+```js
+if ((isLogin && token) || user) { ... } 
+```
+
+식으로 변경하여 협업하는 개발자들로 하여금 헷갈리지 않게 해야한다.
