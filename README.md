@@ -138,3 +138,81 @@ if ((isLogin && token) || user) { ... }
 ```
 
 식으로 변경하여 협업하는 개발자들로 하여금 헷갈리지 않게 해야한다.
+
+## 드모르간의 법칙
+AND 연산과 OR 연산을 이용한 연산 간의 관계로 드 모르간의 상대성이론
+프로그래밍에서는 부정 연산을 다룰 때 편하다.
+
+```js
+  not (A or B) === (not A) and (not B)
+  ㄴ !(A || B) === !A && !B
+
+  not (A and B) === (not A) or (not B)
+  ㄴ !(A && B) === !A || !B
+```
+
+첫번째 케이스(유저와 토큰이 모두(AND) 참일경우)
+```js
+  const isValidUser = true;
+  const isValidToken = true;
+
+  if (isValidaUser && isValidToken) {
+    console.log('로그인 성공!');
+  }
+
+  if (!(isValidaUser && isValidToken)) {
+    console.log('로그인 실패!');
+  }
+
+  if (!isValidaUser || !isValidToken) {
+    console.log('로그인 실패!');
+  }
+```
+
+두번째 케이스 (남자거나 여자거나)
+```js
+  const isMale = true;
+  const isFemale= true;
+
+  if (isMale || isFemale) {
+    console.log('인증 완료');
+  }
+  if (!isMale && !isFemale) {
+    console.log('인증 실패');
+  }
+```
+
+## 자바스크립트 배열은 객체이다.
+Array.isArray() => 진짜 Array인지 확인하는 메서드
+
+## Array.length
+Array.length는 요소의 갯수라고 생각하는 것보다, 마지막 요소의 인덱스라고 생각하는 게 맞다.
+
+```js
+  const arr = [1, 2, 3];
+  arr[3] = 4;
+  console.log(arr.length); // =>  4
+  arr[9] = 10;
+  arr // =>  [1,2,3,4,,,,,,10];
+  console.log(arr.length); // =>  10
+```
+
+배열초기화하기
+```js
+  Array.prototype.clear = function() {
+    this.length = 0;
+  }
+
+  function clearArray(array) {
+    array.length = 0;
+    return array;
+  }
+
+  const arr = [1,2,3];
+  arr.clear();
+  // OR
+  clearArray(arr);
+```
+
+
+
