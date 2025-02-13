@@ -7,11 +7,11 @@ let, const: 블록 스코프이다
 
 최상위 환경은 크게 브라우저(window), 노드JS(global)로 구성되어있다.
 대처 방법
-1) 전역변수 사용하지말자
-2) 지역변수만 만들자
-3) window, global을 조작하지 말자
-4) const, let 활용
-5) IIFE(즉시실행함수), module, closure 
+1) 전역변수 사용을 최대한 지양하자.
+2) 지역변수를 만들어서 캡슐화를 시키자.
+3) window, global을 조작하지 말자.
+4) const, let 활용.
+5) IIFE(즉시실행함수), module, closure ...
 
 ## 임시변수는 최대한 제거하자
 함수 하나에 여러가지 장황하게 작성하지 말자.
@@ -201,7 +201,7 @@ Array.length는 요소의 갯수라고 생각하는 것보다, 마지막 요소�
 ```js
   Array.prototype.clear = function() {
     this.length = 0;
-  }
+  } 
 
   function clearArray(array) {
     array.length = 0;
@@ -214,5 +214,50 @@ Array.length는 요소의 갯수라고 생각하는 것보다, 마지막 요소�
   clearArray(arr);
 ```
 
+## 배열 요소에 접근하기
+```js
+  function clickGroupButton() {
+    const confirmButton = document.getElementsByTagName('button')[0];
+    const cancelButton = document.getElementsByTagName('button')[1];
+    const resetButton = document.getElementsByTagName('button')[2];
+  }
+```
 
+이거를 아래처럼 리팩토링할 수 있다.
 
+```js
+  function clickGroupButton() {
+    const [confirmButton, cancelButton, resetButton] = document.getElementsByTagName('button');
+  }
+```
+
+## 오늘날짜를 출력하는 유용한 함수
+```js
+ function formatDate(targetDate) {
+  const [date] = targetDate.toISOString().split('T');
+  // 또는  const [date] = targetDate.toISOString().split('T')[0];
+  const [year, month, day] = date.split('-');
+  return `${year}년 ${mont}월 ${day}일`;
+ }
+```
+
+## 유사배열객체
+'배열'은 '객체'임을 알 수있다. 아래의 코드를 보자
+```js
+  const objLikeArray = {
+    0: 'hello',
+    1: 'world',
+    length: 2
+  }
+  const arr = Array.from(objLikeArray); // Array.from() => 어레이처럼 만드는 메서드
+```
+
+대표적인 유사배열객체
+- function의 arguments
+- web API nodeList 
+
+유사배열객체만으로는 순수배열 메서드(map, reduce, every, some 등등)을 사용할 수 없다.
+사용하려면??
+```js
+(Array.from(arguments)).map(el => { code...  })
+```
