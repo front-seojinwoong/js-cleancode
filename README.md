@@ -87,7 +87,8 @@ if (x >= 0) {
 대처 방법
 1) if else if 문이 장황하게 늘어질것같으면 차라리 switch문을 써라
 2) if else if else if를 쓰는 대신 if 문을 여러개 작성해라
-3) 핵심은 return 문을 활용해서 사람이 읽기 편한 코드를 작성해야한다는 것이다.
+3) return문을 활용해서 함수 처음에 중요하지 않은 조건을 처리해라
+3) 핵심은 사람이 읽기 편한 코드를 작성해야한다는 것이다.
 
 ## Early Return
 ```js
@@ -237,7 +238,7 @@ Array.length는 요소의 갯수라고 생각하는 것보다, 마지막 요소�
   const [date] = targetDate.toISOString().split('T');
   // 또는  const [date] = targetDate.toISOString().split('T')[0];
   const [year, month, day] = date.split('-');
-  return `${year}년 ${mont}월 ${day}일`;
+  return `${year}년 ${month}월 ${day}일`;
  }
 ```
 
@@ -260,4 +261,110 @@ Array.length는 요소의 갯수라고 생각하는 것보다, 마지막 요소�
 사용하려면??
 ```js
 (Array.from(arguments)).map(el => { code...  })
+```
+
+## 불변성 (immutable) 
+불변성 -> 변하지 않는 상태 (이것을 유지하는 것이 좋다)
+
+방법 1. 배열을 복사한다
+방법 2. 새로운 배열을 반환하는 매서드를 활용한다.
+
+## 배열 메서드 체이닝 활용하기
+
+숫자로 이루어진 배열을 받아서 다음과 같은 처리를 하는 함수를 만든다고 가정해보자.
+1. 배열 각각의 요소는 2000이 넘어야 한다.
+2. 오름차순으로 정렬
+3. 각 숫자끝에 '원'을 붙여야 한다.
+
+for 문 버전을 보자.
+```js
+  const price = ['2000', '1000', '3000', '5000', '4000'];
+
+  function getWonPrice(priceList) {
+    let tmp = [];
+
+    for (let i = 0; i < priceList.length; i++) {
+      if (priceList[i] > 2000) {
+        tmp.push(priceList[i]);
+      }
+    }
+    
+    tmp.sort((a, b) => a - b);
+    return tmp.map(item => item + '원');
+  }
+
+  getWonPrice(price);
+```
+
+이렇게 바꿔보자
+```js
+  const price = ['2000', '1000', '3000', '5000', '4000'];
+
+  const suffixWon = price => price + '원';
+  const isOverTwoThousnad = price => Number(price) > 2000;
+  const ascendingList = (a,b) => a - b;
+
+  function getWonPrice(priceList) {
+    return priceList
+      .filter(isOverTwoThousnad)
+      .sort(ascendingList)
+      .map(suffixWon)
+  }
+
+  getWonPrice(price);
+```
+
+자바스크립트에 탑재되어 있는 내장 매서드를 활용 + 메서드 체이닝을 활용해서 좀 더 선언적으로(= 직관적으로) 코드를 짤 수 있다.
+
+## map VS forEach 
+map은 원본배열을 조작하지 않고 새로운 배열을 return한다
+ ㄴ 사용법 : 배열의 요소를 수정하여 "새로운 배열"을 만들고자 할때.
+forEach는 배열을 return 하지 않는다.
+ ㄴ 사용법 : 배열을 순회하면서 어떠한 동작을 하고자 할때.
+
+## continue, break
+continue, break문은 일부 배열매서드들(map, forEach)에서는 사용시 오류가 난다.(= 중간에 흐름을 제어하기 힘들다.)
+그러면 어떻게 사용해야할까?
+
+1. 전통적 for문, for in, for of문 등을 사용하면 오류가 나지 않는다.
+2. every(), some(), find(), findIndex() 등을 사용하자.
+
+## Computed Property Name
+
+```js
+  const funcName0 = 'func0';
+  const funcName1 = 'func1';
+  const funcName2 = 'func2';
+
+  const obj = {
+    [funcName0]() {
+      return 'func0';
+    },
+    [funcName1]() {
+      return 'func1';
+    },
+    [funcName2]() {
+      return 'func2';
+    },
+  };
+
+  for (let i = 0; i < 3; i++) {
+    console.log(obj[`func${i}`]())
+  }
+
+```
+
+## Lookup Table
+```js
+function getUserType(type) {
+  const USER_TYPE = {
+    ADMIN: '관리자',
+    INSTRUCTOR: '강사',
+    STUDENT: '수강생'
+  };
+
+  return USER_TYPE[type] || '해당없음';
+}
+
+getUserType();
 ```
