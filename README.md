@@ -368,3 +368,83 @@ function getUserType(type) {
 
 getUserType();
 ```
+
+## Object Destructuring
+```js
+const orders = ['First', 'Second', 'Third'];
+
+const [first, _, third] = orders;
+```
+이렇게 하지말고
+```js
+  const {0: v_1, 2: v_2} = orders;
+
+  console.log(v_1);
+  console.log(v_2);
+```
+이렇게하자.
+
+## Object.freeze
+
+- Object.freeze(대상객체) => 대상객체를 얼린다 (수정을 하지 못하게 한다.)
+- Object.isFrozen(대상객체) => 대상객체가 얼려있는지 확인 (수정하지 못하는 상태인지 확인하기)
+- 하지만 Object.freeze는 one depth만 얼린다 (two depth 이상의 key:value는 얼리지 못한다.)
+
+```js
+const STATUS = Object.freeze({
+  PENDING: "PENDING",
+  SUCCESS: "SUCCESS",
+  FAIL: "FAIL",
+  OPTIONS: {
+    GREEN: "GREEN",
+    RED: "RED" 
+  }
+});
+
+STATUS.OPTIONS.GREEN = "G";
+STATUS.OPTIONS.YELLOW = "Y";
+delete STATUS.OPTIONS.RED;
+```
+
+### 깊게 얼리기
+1. 대중적인 유틸 라이브러리(lodash)
+2. 직접 유틸 함수 생성
+3. stackoverflow
+4. TypeScript => readonly
+
+```js
+  function deepFreeze(targetObj) {
+    // 1. 객체를 순회
+    // 2. 값이 객체인지 확인
+    // 3. 객체이면 재귀
+    // 4. 그렇지 않으면 Object.freeze
+    Object.keys(targetObj).forEach(key => {
+      if () {
+        deepFreeze(targetObj[key])
+      }
+    })
+  }
+```
+
+### hasOwnProperty
+
+```js
+const foo = {
+  hasOwnProperty: function() {
+    return 'hasOwnProperty';
+  },
+  bar: 'string'
+}
+
+console.log(foo.hasOwnProperty('bar'));
+console.log(Object.prototype.hasOwnProperty.call(foo, 'bar'));
+```
+
+ObjectName.hasOwnProperty(keyName) => ObjectName객체가 keyName이라는 key를 가지고 있는지 확인하는 매서드
+
+이렇게 메서드로 활용해라
+```js
+function hasOwnProp(targetObj, targetProp) {
+  return Object.prototype.hasOwnProperty.call(targetObj, targetProp);
+}
+```
